@@ -5,7 +5,7 @@ import scipy.stats as stats # 최빈값 계산을 위해 scipy.stats 모듈 임�
 
 # Matplotlib 한글 설정 (웹 환경에서도 적용되도록 코드에 포함)
 # 시스템에 'Malgun Gothic' 폰트가 없는 경우 다른 폰트 이름으로 변경해야 합니다.
-plt.rcParams['font.family'] = 'Noto Sans CJK KR'
+plt.rcParams['font.family'] = 'NanumGothic'
 plt.rcParams['axes.unicode_minus'] = False # 마이너스 부호 깨짐 방지
 
 # --- 웹 페이지 기본 설정 ---
