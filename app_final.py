@@ -341,14 +341,14 @@ if analyze_button: # 버튼이 클릭되면 이 블록 실행
               fig.update_layout(title=f'[{x_var_name}] 값이 고정된 산점도',
                                xaxis_title=x_var_name,
                                yaxis_title=y_var_name, 
-                                width=700, # 예시 너비 (픽셀 단위)
-                                height=500) # 예시 높이 (픽셀 단위)
+                               width=700, # 예시 너비 (픽셀 단위)
+                               height=500) # 예시 높이 (픽셀 단위)
         else:
              fig.update_layout(title=f'[{x_var_name}]와 [{y_var_name}]의 산점도', # 데이터 2개 이상이지만 회귀선/수직선 없는 경우
                                xaxis_title=x_var_name,
-                               yaxis_title=y_var_name)
-                                width=700, # 예시 너비 (픽셀 단위)
-                                height=500 # 예시 높이 (픽셀 단위)
+                               yaxis_title=y_var_name,
+                               width=700, # 예시 너비 (픽셀 단위)
+                               height=500) # 예시 높이 (픽셀 단위)
     
 
         # Streamlit에 Plotly 그래프 표시
