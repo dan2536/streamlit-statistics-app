@@ -1,18 +1,20 @@
 import streamlit as st
 import numpy as np
-import matplotlib.pyplot as plt
-import scipy.stats as stats # 최빈값 계산을 위해 scipy.stats 모듈 임포트
+# import matplotlib.pyplot as plt # Matplotlib 대신 Plotly 사용
+import plotly.graph_objects as go # Plotly 사용
+import scipy.stats as stats
 
-# Matplotlib 한글 설정 (웹 환경에서도 적용되도록 코드에 포함)
-# 시스템에 'Malgun Gothic' 폰트가 없는 경우 다른 폰트 이름으로 변경해야 합니다.
-plt.rcParams['font.family'] = 'NanumGothic'
-plt.rcParams['axes.unicode_minus'] = False # 마이너스 부호 깨짐 방지
+# --- Matplotlib 한글 설정 (이제 Plotly에는 필요 없음) ---
+# plt.rcParams['font.family'] = 'Malgun Gothic' # 주석 처리 또는 삭제
+# plt.rcParams['axes.unicode_minus'] = False # 주석 처리 또는 삭제
+# ------------------------------------------------------
+
 
 # --- 웹 페이지 기본 설정 ---
 st.set_page_config(page_title="학생용 통계 분석 웹 프로그램", layout="wide")
 
-st.title("📊 도담고 학생용 통계 분석 프로그램")
-st.write("두 변수(X, Y)의 관계를 분석하고, 기술 통계(평균, 중앙값, 최빈값, 표준편차), 상관계수, 회귀식, 산점도를 보여줍니다.")
+st.title("📊 학생용 통계 분석 프로그램")
+st.write("두 변수(X, Y)의 관계를 분석하고, 기술 통계, 상관계수, 회귀식, 산점도를 보여줍니다.")
 
 # --- 데이터 입력 섹션 ---
 st.header("데이터 입력")
@@ -20,18 +22,18 @@ st.header("데이터 입력")
 # 변수명 입력
 col_var_name1, col_var_name2 = st.columns(2)
 with col_var_name1:
-    x_var_name = st.text_input("X 변수명 입력  (한글도 가능하나 영어로 입력시에만 그래프가 정상적으로 도출됨):", "X", key="x_var_name_input")
+    x_var_name = st.text_input("X 변수명 입력:", "X", key="x_var_name_input")
 with col_var_name2:
-    y_var_name = st.text_input("Y 변수명 입력  (한글도 가능하나 영어로 입력시에만 그래프가 정상적으로 도출됨):", "Y", key="y_var_name_input")
+    y_var_name = st.text_input("Y 변수명 입력:", "Y", key="y_var_name_input")
 
 st.write("---") # 구분선 추가
 
 # X, Y 값 입력 (예전처럼 통합된 텍스트 영역 사용)
 col_data_input1, col_data_input2 = st.columns(2)
 with col_data_input1:
-    x_data_str = st.text_area(f"{x_var_name} 값 입력  (각 값은 Enter 눌러 줄바꿈, X와 Y값은 쌍을 지어 나열):", height=150, key="x_data_text_area")
+    x_data_str = st.text_area(f"{x_var_name} 값 입력 (각 값은 줄바꿈):", height=150, key="x_data_text_area")
 with col_data_input2:
-    y_data_str = st.text_area(f"{y_var_name} 값 입력  (각 값은 Enter 눌러 줄바꿈, X와 Y값은 쌍을 지어 나열):", height=150, key="y_data_text_area")
+    y_data_str = st.text_area(f"{y_var_name} 값 입력 (각 값은 줄바꿈):", height=150, key="y_data_text_area")
 
 
 # --- 분석 실행 버튼 ---
@@ -121,13 +123,10 @@ if analyze_button: # 버튼이 클릭되면 이 블록 실행
     mode_y_result = None
     if len(x_np) > 0:
         try:
-            # keepdims=False는 결과 형태를 배열로 유지하려 시도 (최신 SciPy 기본 동작)
-            # 하지만 구 버전 호환성을 위해 결과의 형태를 체크하는 로직 추가 필요
             mode_x_result = stats.mode(x_np, keepdims=False)
         except Exception as e:
-            # 혹시 모를 다른 예외 처리
             st.warning(f"{x_var_name} 최빈값 계산 중 오류 발생: {e}")
-            mode_x_result = None # 오류 시 결과 없음으로 설정
+            mode_x_result = None
 
     if len(y_np) > 0:
         try:
@@ -156,24 +155,22 @@ if analyze_button: # 버튼이 클릭되면 이 블록 실행
     st.write("_(중앙값은 데이터를 크기 순서대로 나열했을 때 가장 중앙에 위치하는 값으로, 극단적인 값에 영향을 덜 받습니다.)_")
     st.write("---") # 구분선
 
-    # 최빈값 출력 (결과 형태 체크 로직 추가)
+    # 최빈값 출력
     st.write(f"**{x_var_name}**의 최빈값:")
     if mode_x_result is not None and len(x_np) > 0:
-        # 결과 형태를 안전하게 체크
-        mode_val_x = mode_x_result.mode # mode는 배열 형태일 가능성이 높지만 안전하게 변수에 담음
-        count_x = mode_x_result.count[0] if not np.isscalar(mode_x_result.count) else mode_x_result.count # count는 스칼라일 수도, 배열의 첫 요소일 수도 있음
+        mode_val_x = mode_x_result.mode
+        count_x = mode_x_result.count[0] if not np.isscalar(mode_x_result.count) else mode_x_result.count
 
         if count_x == 1 and len(x_np) == len(np.unique(x_np)):
              st.info(f"  모든 {x_var_name} 값이 한 번씩만 나타나 최빈값이 없습니다.")
         else:
-             # 최빈값 값 자체를 표시
-             if isinstance(mode_val_x, np.ndarray): # 결과가 배열 형태인 경우
-                 if mode_val_x.size > 1: # 여러 개의 최빈값인 경우
+             if isinstance(mode_val_x, np.ndarray):
+                 if mode_val_x.size > 1:
                       st.write(f"  {mode_val_x} (개수: {count_x}회)")
                       st.info("  참고: 최빈값이 여러 개입니다.")
-                 else: # 최빈값이 하나인 경우 (배열 안에 하나)
-                      st.write(f"  {mode_val_x.item()} (개수: {count_x}회)") # .item()으로 단일 값 추출
-             else: # 결과가 스칼라 형태인 경우 (매우 드물지만 호환성 위해)
+                 else:
+                      st.write(f"  {mode_val_x.item()} (개수: {count_x}회)")
+             else:
                   st.write(f"  {mode_val_x} (개수: {count_x}회)")
 
     elif len(x_np) == 0:
@@ -231,7 +228,7 @@ if analyze_button: # 버튼이 클릭되면 이 블록 실행
     denominator = np.sqrt(sum_of_sq_x_deviations * sum_of_sq_y_deviations)
 
     correlation_coefficient = 0
-    can_calculate_correlation = denominator != 0 # 상관계수 분모 0 아니면 계산 가능
+    can_calculate_correlation = denominator != 0
 
     if can_calculate_correlation:
         correlation_coefficient = numerator / denominator
@@ -262,7 +259,10 @@ if analyze_button: # 버튼이 클릭되면 이 블록 실행
 
     # 회귀식 계산
     st.subheader("회귀식")
+    # 👇👇👇 여기에 회귀식 설명을 추가합니다 👇👇👇
     st.write("회귀식은 두 변수(X와 Y) 사이의 가장 잘 맞는 직선 관계를 나타내는 공식이에요. 이 공식을 이용하면 X 값을 알 때 Y 값을 예측해 볼 수 있습니다.")
+    # 👆👆👆 여기에 회귀식 설명을 추가합니다 👆👆👆
+
 
     slope = None
     intercept = mean_y
@@ -284,15 +284,26 @@ if analyze_button: # 버튼이 클릭되면 이 블록 실행
 
     # 산점도 시각화
     st.subheader("산점도")
+    # 👇👇👇 여기에 산점도 설명을 추가합니다 👇👇👇
     st.write("산점도는 조사한 데이터 쌍(X 값과 Y 값) 하나하나를 점으로 나타낸 그래프입니다. 두 변수 사이에 어떤 관계(점들이 모여서 오른쪽 위/아래로 올라가는지, 흩어져 있는지)가 있는지 눈으로 쉽게 확인할 수 있습니다.")
+    # 👆👆👆 여기에 산점도 설명을 추가합니다 👆👆👆
     st.write(f"'{x_var_name}'와 '{y_var_name}'의 산점도 그래프:")
 
-    # --- 그래프 그리기 시작 (Streamlit에 표시) ---
-    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # --- 그래프 그리기 시작 (Plotly에 표시) ---
+    # Plotly를 사용합니다.
+    fig = go.Figure() # Plotly Figure 객체 생성
 
     if len(x_np) >= 2:
-        ax.scatter(x_np, y_np, color='blue', label='Data Points')
+        # 산점도 데이터 추가
+        fig.add_trace(go.Scatter(
+            x=x_np,
+            y=y_np,
+            mode='markers', # 점으로 표시
+            name='Data Points' # 범례 이름
+        ))
 
+        # 회귀선 추가 (계산 가능할 때만)
         if can_calculate_regression:
             if np.max(x_np) - np.min(x_np) == 0:
                  x_range = np.array([x_np[0] - 1, x_np[0] + 1])
@@ -301,29 +312,51 @@ if analyze_button: # 버튼이 클릭되면 이 블록 실행
                                     np.max(x_np) + (np.max(x_np) - np.min(x_np)) * 0.1])
 
             y_line = intercept + slope * x_range
-            ax.plot(x_range, y_line, color='red', label=f'회귀선 (Ŷ = {intercept:.2f} + {slope:.2f}X)')
-            ax.set_title(f'[{x_var_name}]와 [{y_var_name}]의 산점도 및 회귀선')
+            fig.add_trace(go.Scatter(
+                x=x_range,
+                y=y_line,
+                mode='lines', # 선으로 표시
+                name=f'회귀선 (Ŷ = {intercept:.2f} + {slope:.2f}X)', # 범례 이름
+                line=dict(color='red') # 선 색상
+            ))
 
+        elif len(np.unique(x_np)) == 1: # X 값이 모두 같아서 수직선 형태일 때
+             fig.add_trace(go.Scatter(
+                x=[mean_x, mean_x], # X 값 고정
+                y=[np.min(y_np), np.max(y_np)], # Y 값 최소~최대 범위
+                mode='lines',
+                name=f'X = {mean_x:.2f} ({x_var_name})',
+                line=dict(color='red', dash='dash') # 점선
+            ))
+
+
+        # 그래프 레이아웃 업데이트 (제목, 축 이름)
+        if can_calculate_regression:
+             fig.update_layout(title=f'[{x_var_name}]와 [{y_var_name}]의 산점도 및 회귀선',
+                               xaxis_title=x_var_name,
+                               yaxis_title=y_var_name)
         elif len(np.unique(x_np)) == 1:
-             ax.axvline(x=mean_x, color='red', linestyle='--', label=f'X = {mean_x:.2f} ({x_var_name})')
-             ax.set_title(f'[{x_var_name}] 값이 고정된 산점도')
+              fig.update_layout(title=f'[{x_var_name}] 값이 고정된 산점도',
+                               xaxis_title=x_var_name,
+                               yaxis_title=y_var_name)
         else:
-             ax.set_title(f'[{x_var_name}]와 [{y_var_name}]의 산점도')
+             fig.update_layout(title=f'[{x_var_name}]와 [{y_var_name}]의 산점도', # 데이터 2개 이상이지만 회귀선/수직선 없는 경우
+                               xaxis_title=x_var_name,
+                               yaxis_title=y_var_name)
 
 
-        ax.set_xlabel(x_var_name)
-        ax.set_ylabel(y_var_name)
-        ax.grid(True)
-        ax.legend()
+        # Streamlit에 Plotly 그래프 표시
+        st.plotly_chart(fig, use_container_width=True) # use_container_width로 화면 너비에 맞춤
 
-        st.pyplot(fig)
 
-    else:
+    else: # 데이터 쌍이 2개 미만이어서 산점도를 그릴 수 없을 때
         st.info("데이터 쌍이 2개 미만이라 산점도를 그릴 수 없습니다.")
 
-    plt.close(fig)
+
+    # plt.close(fig) # Plotly 사용 시 필요 없음
 
 
     st.write("--- 통계 분석 완료 ---")
 
-    st.caption("제작: [도담고 사회문제탐구 교사가 도담고 3학년 학생들을 응원하고 사랑하는 마음으로 제작함]")
+    # 여기에 이름 표시 코드를 추가합니다
+    st.caption("제작: [여기에 원하는 이름이나 문구를 입력하세요]")
