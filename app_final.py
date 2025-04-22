@@ -31,9 +31,9 @@ st.write("---") # 구분선 추가
 # X, Y 값 입력 (예전처럼 통합된 텍스트 영역 사용)
 col_data_input1, col_data_input2 = st.columns(2)
 with col_data_input1:
-    x_data_str = st.text_area(f"{x_var_name} 값 입력 (각 값은 줄바꿈):", height=150, key="x_data_text_area")
+    x_data_str = st.text_area(f"{x_var_name} 값 입력 (각 값은 Enter을 눌러 줄바꿈, X와 Y값은 쌍을 지어 나열):", height=150, key="x_data_text_area")
 with col_data_input2:
-    y_data_str = st.text_area(f"{y_var_name} 값 입력 (각 값은 줄바꿈):", height=150, key="y_data_text_area")
+    y_data_str = st.text_area(f"{y_var_name} 값 입력 (각 값은 Enter을 눌러 줄바꿈, X와 Y값은 쌍을 지어 나열):", height=150, key="y_data_text_area")
 
 
 # --- 분석 실행 버튼 ---
