@@ -11,7 +11,7 @@ import scipy.stats as stats
 
 
 # --- 웹 페이지 기본 설정 ---
-st.set_page_config(page_title="학생용 통계 분석 웹 프로그램", layout="wide")
+st.set_page_config(page_title="도담고 학생용 통계 분석 웹 프로그램", layout="wide")
 
 st.title("📊 학생용 통계 분석 프로그램")
 st.write("두 변수(X, Y)의 관계를 분석하고, 기술 통계, 상관계수, 회귀식, 산점도를 보여줍니다.")
@@ -335,18 +335,24 @@ if analyze_button: # 버튼이 클릭되면 이 블록 실행
              fig.update_layout(title=f'[{x_var_name}]와 [{y_var_name}]의 산점도 및 회귀선',
                                xaxis_title=x_var_name,
                                yaxis_title=y_var_name)
+                               width=700, # 예시 너비 (픽셀 단위)
+                               height=500 # 예시 높이 (픽셀 단위)
         elif len(np.unique(x_np)) == 1:
               fig.update_layout(title=f'[{x_var_name}] 값이 고정된 산점도',
                                xaxis_title=x_var_name,
                                yaxis_title=y_var_name)
+                               width=700, # 예시 너비 (픽셀 단위)
+                               height=500 # 예시 높이 (픽셀 단위)
         else:
              fig.update_layout(title=f'[{x_var_name}]와 [{y_var_name}]의 산점도', # 데이터 2개 이상이지만 회귀선/수직선 없는 경우
                                xaxis_title=x_var_name,
                                yaxis_title=y_var_name)
+                               width=700, # 예시 너비 (픽셀 단위)
+                               height=500 # 예시 높이 (픽셀 단위)
 
 
         # Streamlit에 Plotly 그래프 표시
-        st.plotly_chart(fig, use_container_width=True) # use_container_width로 화면 너비에 맞춤
+        st.plotly_chart(fig, use_container_width=False) # use_container_width로 화면 너비에 맞춤
 
 
     else: # 데이터 쌍이 2개 미만이어서 산점도를 그릴 수 없을 때
@@ -359,4 +365,4 @@ if analyze_button: # 버튼이 클릭되면 이 블록 실행
     st.write("--- 통계 분석 완료 ---")
 
     # 여기에 이름 표시 코드를 추가합니다
-    st.caption("제작: [여기에 원하는 이름이나 문구를 입력하세요]")
+    st.caption("제작: [도담고 사회문제탐구 교사가 도담고 3학년 학생들을 사랑하고 응원하는 마음으로 제작함]")
