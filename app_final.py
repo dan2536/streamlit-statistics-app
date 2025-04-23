@@ -4,12 +4,6 @@ import numpy as np
 import plotly.graph_objects as go # Plotly 사용
 import scipy.stats as stats
 
-# --- Matplotlib 한글 설정 (이제 Plotly에는 필요 없음) ---
-# plt.rcParams['font.family'] = 'Malgun Gothic' # 주석 처리 또는 삭제
-# plt.rcParams['axes.unicode_minus'] = False # 주석 처리 또는 삭제
-# ------------------------------------------------------
-
-
 # --- 웹 페이지 기본 설정 ---
 st.set_page_config(page_title="학생용 통계 분석 웹 프로그램", layout="wide")
 
@@ -259,9 +253,8 @@ if analyze_button: # 버튼이 클릭되면 이 블록 실행
 
     # 회귀식 계산
     st.subheader("회귀식")
-    # 👇👇👇 여기에 회귀식 설명을 추가합니다 👇👇👇
+ 
     st.write("회귀식은 두 변수(X와 Y) 사이의 가장 잘 맞는 직선 관계를 나타내는 공식이에요. 이 공식을 이용하면 X 값을 알 때 Y 값을 예측해 볼 수 있습니다.")
-    # 👆👆👆 여기에 회귀식 설명을 추가합니다 👆👆👆
 
 
     slope = None
@@ -361,10 +354,5 @@ if analyze_button: # 버튼이 클릭되면 이 블록 실행
         st.info("데이터 쌍이 2개 미만이라 산점도를 그릴 수 없습니다.")
 
 
-    # plt.close(fig) # Plotly 사용 시 필요 없음
-
-
     st.write("--- 통계 분석 완료 ---")
-
-    # 여기에 이름 표시 코드를 추가합니다
     st.caption("제작: 도담고 사회문제탐구 교사가 도담고 3학년 학생들을 사랑하고 응원하는 마음으로 제작함")
